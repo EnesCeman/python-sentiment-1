@@ -4,9 +4,7 @@ import streamlit as st
 import torch
 from transformers import (
     AutoModelForSequenceClassification,
-    AutoTokenizer,
-    BertForSequenceClassification,
-    BertTokenizer,
+    AutoTokenizer
 )
 
 
