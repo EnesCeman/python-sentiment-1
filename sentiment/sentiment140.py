@@ -1,10 +1,15 @@
 import datetime
+import os
+
+import openai
 import pandas as pd
 import streamlit as st
 import torch
 from transformers import (
     AutoModelForSequenceClassification,
-    AutoTokenizer
+    AutoTokenizer,
+    BertForSequenceClassification,
+    BertTokenizer,
 )
 
 
@@ -26,10 +31,30 @@ def sentiment_score(review, tokenizer, model):
 
 def main():
     st.title("OpenAI sentiment analysis using Bert NLP")
-    csv_file = st.file_uploader("Please upload Your Business' Reviews", type=["csv"])
+    csv_file = st.file_uploader(
+        "Please upload Your Business' Reviews",
+        type=["csv"],
+        accept_multiple_files=False,  # Allow only one file to be uploaded
+        help="Only CSV files are allowed.",
+    )
 
     if csv_file is not None:
-        df = pd.read_csv(csv_file)
+        if not csv_file.name.endswith(".csv"):
+            st.error("Error: File not supported. Please upload a CSV file")
+            return
+        try:
+            df = pd.read_csv(csv_file, encoding="utf-8")
+        except UnicodeDecodeError:
+            st.error(
+                "Error: Unable to decode the CSV file. Please ensure it is UTF-8 compatible."
+            )
+            return
+        except pd.errors.ParserError:
+            st.error(
+                "Error: Unable to parse the CSV file. Please check the file format."
+            )
+            return
+
         df[
             "Sentiment Score"
         ] = 0  # Add the 'Sentiment Score' column with default values
