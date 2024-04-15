@@ -62,7 +62,7 @@ def main():
         # Press this button to see results
         if st.button("Analyze"):
             # Perform sentiment analysis on the 'Review' column
-            df["Sentiment Score"] = df["Review"].apply(
+            df["Sentiment Score"] = df.iloc[:, 0].apply(
                 lambda x: sentiment_score(x[:1200], tokenizer, model)
                 if pd.notna(x)
                 else 0
